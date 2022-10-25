@@ -1,7 +1,7 @@
 # Socket Java
 
 ## Atenção!
-Este projeto foi desenvolvido para fins de avaliação para a disciplina de Sistemas Distribuídos
+Este projeto foi desenvolvido para fins avaliativos na disciplina de Sistemas Distribuídos
 ministrada pelo professor Richard Duarte Ribeiro na Universidade Tecnológica Federal do Paraná - Campi Ponta Grossa
 
 ## Pré Requisitos
