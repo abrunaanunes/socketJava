@@ -56,11 +56,11 @@ public class User {
 		this.password = password;
 	}
 
-	public Integer getCategory_id() {
+	public Integer getCategoryId() {
 		return category_id;
 	}
 
-	public void setCategory_id(Integer category_id) {
+	public void setCategoryId(Integer category_id) {
 		this.category_id = category_id;
 	}
 
@@ -159,6 +159,14 @@ public class User {
 
         }
     	
+    	JSONObject userObj = new JSONObject();
+        userObj.put("ra", user.getRa());
+        userObj.put("senha", user.getPassword());
+        userObj.put("nome", user.getName());
+        userObj.put("categoria_id", user.getCategoryId());
+        userObj.put("descricao", user.getDescription());
+        data.put("usuario", userObj);
+        
     	response.put("status", 201);
     	response.put("mensagem", "Usuário cadastrado com sucesso!");
     	response.put("dados", data);
@@ -187,6 +195,14 @@ public class User {
         
         // Atualizando isAvailable       	
         user.setIsAvailable(true);
+        JSONObject userObj = new JSONObject();
+        userObj.put("ra", user.getRa());
+        userObj.put("senha", user.getPassword());
+        userObj.put("nome", user.getName());
+        userObj.put("categoria_id", user.getCategoryId());
+        userObj.put("descricao", user.getDescription());
+        data.put("usuario", userObj);
+        
         response.put("status", 200);
         response.put("mensagem", "Login efetuado com sucesso");
         response.put("dados", data);
