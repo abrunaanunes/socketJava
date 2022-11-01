@@ -104,10 +104,8 @@ public class Register extends GUI {
     protected void insertActions() {
         jb_register.addActionListener(event -> {
         	try {
-//        		Socket connection = new Socket(Server.HOST, Server.PORT);
-        		Socket connection = new Socket("10.20.1.20", 8099);
-//        		Socket connection = new Socket("51.81.87.67", 8082);
-        		Utils utils = new Utils(connection);
+        		Socket socket = new Socket(Server.HOST, Server.PORT);
+        		Utils utils = new Utils(socket);
         		
         		String name = jt_name.getText();
 				String ra = jt_ra.getText();
@@ -127,25 +125,25 @@ public class Register extends GUI {
 		        params.put("descricao", description);
 		        params.put("categoria_id", category_id);
 
-		        JSONObject obj = new JSONObject();
-		        obj.put("operacao", "cadastrar");
-		        obj.put("parametros", params);
-		        utils.sendMessage(obj);
+		        JSONObject request = new JSONObject();
+		        request.put("operacao", "cadastrar");
+		        request.put("parametros", params);
+		        utils.sendMessage(request);
 		        
 		        String temp = utils.receiveMessage();
-		        JSONObject json;
+		        JSONObject response;
 				JSONParser parserMessage = new JSONParser();
-				json = (JSONObject) parserMessage.parse(temp);
+				response = (JSONObject) parserMessage.parse(temp);
 				
-				System.out.println(json.toJSONString());
+				System.out.println(response.toJSONString());
 		        
-				Integer status = Integer.parseInt(json.get("status").toString()) ;
+				Integer status = Integer.parseInt(response.get("status").toString()) ;
 				
 				if(status == 201) {
-					Home home = new Home(connection, obj.toJSONString());
+					Home home = new Home(socket, request.toJSONString());
 					this.dispose();
 				} else {
-					JOptionPane.showMessageDialog(this, json.get("mensagem"));
+					JOptionPane.showMessageDialog(this, response.get("mensagem"));
 				}
 			} catch( IOException | ParseException ex) {
 				JOptionPane.showMessageDialog(this, ex.getMessage());
