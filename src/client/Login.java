@@ -75,10 +75,8 @@ public class Login extends GUI {
     protected void insertActions() {
         jb_login.addActionListener(event -> {
         	try {
-//        		Socket connection = new Socket("51.81.87.67", 8082);
-//        		Socket connection = new Socket(Server.HOST, Server.PORT);
-        		Socket connection = new Socket("10.20.1.20", 8099);
-        		Utils utils = new Utils(connection);
+        		Socket socket = new Socket(Server.HOST, Server.PORT);
+        		Utils utils = new Utils(socket);
 				String ra = jt_ra.getText();
 				String password = jt_password.getText();
 				
@@ -90,24 +88,23 @@ public class Login extends GUI {
 		        params.put("ra", ra);
 		        params.put("senha", password);
 
-		        JSONObject obj = new JSONObject();
-		        obj.put("operacao", "login");
-		        obj.put("parametros", params);
-		        System.out.println(obj.toJSONString());
-		        utils.sendMessage(obj);
+		        JSONObject request = new JSONObject();
+		        request.put("operacao", "login");
+		        request.put("parametros", params);
+		        utils.sendMessage(request);
 		        
 		        String temp = utils.receiveMessage();
-		        JSONObject json;
+		        JSONObject response;
 				JSONParser parserMessage = new JSONParser();
-				json = (JSONObject) parserMessage.parse(temp);
+				response = (JSONObject) parserMessage.parse(temp);
 		  
-				Integer status = Integer.parseInt(json.get("status").toString());
+				Integer status = Integer.parseInt(response.get("status").toString());
 				
 				if(status == 200) {
-					Home home = new Home(connection, obj.toJSONString());
+					Home home = new Home(socket, response.toJSONString());
 					this.dispose();
 				} else {
-					JOptionPane.showMessageDialog(this, json.get("mensagem"));
+					JOptionPane.showMessageDialog(this, response.get("mensagem"));
 				}
 			} catch( IOException | ParseException ex) {
 				JOptionPane.showMessageDialog(this, ex.getMessage());
