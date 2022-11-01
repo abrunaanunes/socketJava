@@ -20,6 +20,7 @@ public class Server {
     public static final int PORT = 4444;
     private ServerSocket socketServer;
     private ArrayList<ClientListener> clients;
+    public static Utils utils;
 
     @SuppressWarnings("unused")
 	public Server() {
@@ -31,7 +32,7 @@ public class Server {
             
             while (true) {
                 Socket socketClient = socketServer.accept();
-                Utils utils = new Utils(socketClient);
+                this.utils = new Utils(socketClient);
                 User user = new User(new CategoryList(), new UserList());
                 JSONObject response;
               

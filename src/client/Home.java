@@ -31,7 +31,7 @@ public class Home extends GUI {
 
     private JLabel title;
     private ServerSocket server;
-    private final Socket socket;
+    public static Socket socket;
     private final String request;
     private JButton jb_get_connected, jb_logout;
     private JList jlist;
@@ -58,7 +58,7 @@ public class Home extends GUI {
     @Override
     protected void configComponents() {
         this.setLayout(null);
-        this.setMinimumSize(new Dimension(600, 480));
+        this.setMinimumSize(new Dimension(600, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setBackground(Color.WHITE);
@@ -92,23 +92,59 @@ public class Home extends GUI {
 
     @Override
     protected void insertActions() {
-    	jb_logout.addActionListener(event -> {
-    		Utils utils;
-			try {
-				utils = new Utils(this.socket);
-				JSONObject params = new JSONObject();
-				params.put("ra", "2328585");
-				params.put("senha", "12345");
-				
-				JSONObject request = new JSONObject();
-				request.put("operacao", "logout");
-				request.put("parametros", params);
-				System.out.println(request.toJSONString());
-				utils.sendMessage(request);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
+    	this.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+            	try {
+					Utils utils = new Utils(Home.socket);
+					JSONObject params = new JSONObject();
+					params.put("ra", "2328585");
+					params.put("senha", "12345");
+					
+					JSONObject request = new JSONObject();
+					request.put("operacao", "logout");
+					request.put("parametros", params);
+					
+					System.out.println("[CLIENTE->SERVIDOR]" + request.toJSONString());
+					utils.sendMessage(request);
+					
+				} catch (IOException e1) {
+					//
+				}    			
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
+    	
+    	this.jb_logout.addActionListener(event -> {
+    		System.out.println("ok");
     	});
        
     }

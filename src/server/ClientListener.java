@@ -9,19 +9,20 @@ import java.net.Socket;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import client.Home;
 import common.Utils;
 
 public class ClientListener implements Runnable {
-	private Socket connection;
+	private Socket socket;
 	private Server server;
 	private boolean running;
-	private Utils utils;
+//	private Utils utils;
 	
-	public ClientListener(Socket connection, Server server) throws IOException {
-		this.connection = connection;
+	public ClientListener(Socket socket, Server server) throws IOException {
+		this.socket = socket;
 		this.server = server;
 		this.running = false;
-		this.utils = new Utils(this.connection);
+//		this.utils = new Utils(this.connection);
 	}
 	
 	public boolean isRunning() {
@@ -36,6 +37,7 @@ public class ClientListener implements Runnable {
 		 running = true;
 		 while(running) {
 			 try {
+				Utils utils = new Utils(Home.socket);
 				String response = utils.receiveMessage();
 				System.out.println(response);
 				
