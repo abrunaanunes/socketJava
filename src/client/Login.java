@@ -75,7 +75,9 @@ public class Login extends GUI {
     protected void insertActions() {
         jb_login.addActionListener(event -> {
         	try {
-        		Socket connection = new Socket("51.81.87.67", 8082);
+//        		Socket connection = new Socket("51.81.87.67", 8082);
+//        		Socket connection = new Socket(Server.HOST, Server.PORT);
+        		Socket connection = new Socket("10.20.1.20", 8099);
         		Utils utils = new Utils(connection);
 				String ra = jt_ra.getText();
 				String password = jt_password.getText();
@@ -91,10 +93,15 @@ public class Login extends GUI {
 		        JSONObject obj = new JSONObject();
 		        obj.put("operacao", "login");
 		        obj.put("parametros", params);
+		        System.out.println(obj.toJSONString());
 		        utils.sendMessage(obj);
 		        
-		        JSONObject json = utils.receiveMessage();
-				Integer status = Integer.parseInt(json.get("status").toString()) ;
+		        String temp = utils.receiveMessage();
+		        JSONObject json;
+				JSONParser parserMessage = new JSONParser();
+				json = (JSONObject) parserMessage.parse(temp);
+		  
+				Integer status = Integer.parseInt(json.get("status").toString());
 				
 				if(status == 200) {
 					Home home = new Home(connection, obj.toJSONString());

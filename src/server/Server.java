@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import classes.CategoryList;
@@ -33,14 +34,19 @@ public class Server {
                 Utils utils = new Utils(socketClient);
                 User user = new User(new CategoryList(), new UserList());
                 JSONObject response;
-               
-                JSONObject request = utils.receiveMessage();
+              
+                String temp = utils.receiveMessage();
+                JSONObject request;
+				JSONParser parserMessage = new JSONParser();
+				request = (JSONObject) parserMessage.parse(temp);
+				
                 System.out.println("[CLIENTE->SERVIDOR]" + request.toJSONString());
                 String operation = request.get("operacao").toString();
                 
                 switch(operation) {
 	                case "login" : {
 	                	response = user.login(request);
+	                	System.out.println(response.toJSONString());
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
 			                ClientListener clientListener = new ClientListener(socketClient, this);
 			                clients.add(clientListener);

@@ -33,7 +33,7 @@ public class Home extends GUI {
     private ServerSocket server;
     private final Socket connection;
     private final String connection_info;
-    private JButton jb_get_connected, jb_start_talk;
+    private JButton jb_get_connected, jb_logout;
     private JList jlist;
     private JScrollPane scroll;
 
@@ -52,7 +52,7 @@ public class Home extends GUI {
         jb_get_connected = new JButton("Atualizar contatos");
         jlist = new JList();
         scroll = new JScrollPane(jlist);
-        jb_start_talk = new JButton("Abrir Conversa");
+        jb_logout = new JButton("Abrir Conversa");
     }
 
     @Override
@@ -70,8 +70,8 @@ public class Home extends GUI {
         jb_get_connected.setBounds(400, 10, 180, 40);
         jb_get_connected.setFocusable(false);
 
-        jb_start_talk.setBounds(10, 400, 575, 40);
-        jb_start_talk.setFocusable(false);
+        jb_logout.setBounds(10, 400, 575, 40);
+        jb_logout.setFocusable(false);
 
         jlist.setBorder(BorderFactory.createTitledBorder("Usuários online"));
         jlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -87,11 +87,29 @@ public class Home extends GUI {
         this.add(title);
         this.add(jb_get_connected);
         this.add(scroll);
-        this.add(jb_start_talk);
+        this.add(jb_logout);
     }
 
     @Override
     protected void insertActions() {
+    	jb_logout.addActionListener(event -> {
+    		Utils utils;
+			try {
+				utils = new Utils(this.connection);
+				JSONObject params = new JSONObject();
+				params.put("ra", "2328585");
+				params.put("senha", "12345");
+				
+				JSONObject obj = new JSONObject();
+				obj.put("operacao", "logout");
+				obj.put("parametros", params);
+				System.out.println(obj.toJSONString());
+				utils.sendMessage(obj);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
+    	});
        
     }
 

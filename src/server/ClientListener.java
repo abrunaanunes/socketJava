@@ -6,17 +6,22 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
 import common.Utils;
 
 public class ClientListener implements Runnable {
 	private Socket connection;
 	private Server server;
 	private boolean running;
+	private Utils utils;
 	
-	public ClientListener(Socket connection, Server server) {
+	public ClientListener(Socket connection, Server server) throws IOException {
 		this.connection = connection;
 		this.server = server;
 		this.running = false;
+		this.utils = new Utils(this.connection);
 	}
 	
 	public boolean isRunning() {
@@ -31,7 +36,12 @@ public class ClientListener implements Runnable {
 		 running = true;
 		 String message;
 		 while(running) {
-			 
+			 try {
+				String response = utils.receiveMessage();
+				System.out.println(response);
+			} catch (IOException | ParseException e) {
+				// TODO Auto-generated catch block
+			}
 		 }
 	}
 }

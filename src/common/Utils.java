@@ -24,15 +24,21 @@ public class Utils {
 	
     public boolean sendMessage(JSONObject message)
     {     
-    	out.println(message);
+    	out.println(message.toJSONString());
 
         return !out.checkError();
     }
     
-    public JSONObject receiveMessage() throws IOException, ParseException
+    public String receiveMessage() throws IOException, ParseException
     {
     	String temp =  in.readLine();
 		JSONParser parserMessage = new JSONParser();
-		return (JSONObject) parserMessage.parse(temp);
+		JSONObject response = (JSONObject) parserMessage.parse(temp);
+		return response.toJSONString();
+    }
+    
+    public void flush() 
+    {
+    	this.out.flush();
     }
 }
