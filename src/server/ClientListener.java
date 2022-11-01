@@ -34,13 +34,14 @@ public class ClientListener implements Runnable {
 	
 	public void run() {
 		 running = true;
-		 String message;
 		 while(running) {
 			 try {
 				String response = utils.receiveMessage();
 				System.out.println(response);
+				
+				
 			} catch (IOException | ParseException e) {
-				// TODO Auto-generated catch block
+				System.out.println("[CLIENT LISTENER ERROR]: " + e.getMessage() );
 			}
 		 }
 	}

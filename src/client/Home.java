@@ -49,7 +49,7 @@ public class Home extends GUI {
     @Override
     protected void initComponents() {
         title = new JLabel();
-        jb_get_connected = new JButton("Atualizar contatos");
+        jb_get_connected = new JButton("Desconectar");
         jlist = new JList();
         scroll = new JScrollPane(jlist);
         jb_logout = new JButton("Abrir Conversa");
