@@ -31,17 +31,17 @@ public class Home extends GUI {
 
     private JLabel title;
     private ServerSocket server;
-    private final Socket connection;
-    private final String connection_info;
+    private final Socket socket;
+    private final String request;
     private JButton jb_get_connected, jb_logout;
     private JList jlist;
     private JScrollPane scroll;
 
-    public Home(Socket connection, String request) {
+    public Home(Socket socket, String request) {
         super("Chat - Home");
 		
-        this.connection_info = request;
-        this.connection = connection;
+        this.request = request;
+        this.socket = socket;
         this.title.setText("Bem-vindo(a)");
         this.setTitle("Home");
     }
@@ -95,16 +95,16 @@ public class Home extends GUI {
     	jb_logout.addActionListener(event -> {
     		Utils utils;
 			try {
-				utils = new Utils(this.connection);
+				utils = new Utils(this.socket);
 				JSONObject params = new JSONObject();
 				params.put("ra", "2328585");
 				params.put("senha", "12345");
 				
-				JSONObject obj = new JSONObject();
-				obj.put("operacao", "logout");
-				obj.put("parametros", params);
-				System.out.println(obj.toJSONString());
-				utils.sendMessage(obj);
+				JSONObject request = new JSONObject();
+				request.put("operacao", "logout");
+				request.put("parametros", params);
+				System.out.println(request.toJSONString());
+				utils.sendMessage(request);
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
