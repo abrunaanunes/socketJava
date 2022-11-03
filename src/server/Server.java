@@ -16,14 +16,17 @@ import common.Utils;
 
 public class Server {
 
+	private ServerSocket socketServer;
+	
     public static final String HOST = "127.0.0.1";
-    public static final int PORT = 4444;
-    private ServerSocket socketServer;
-    private ArrayList<ClientListener> clients;
+    public static final int PORT = 4444;    
+    public static ArrayList<ClientListener> clients;
     public static Utils utils;
+    public static User user;
 
     @SuppressWarnings("unused")
 	public Server() {
+    	this.user = new User(new CategoryList(), new UserList());
     	
     	try {
             clients = new ArrayList<ClientListener>();
@@ -33,10 +36,9 @@ public class Server {
             while (true) {
                 Socket socketClient = socketServer.accept();
                 this.utils = new Utils(socketClient);
-                User user = new User(new CategoryList(), new UserList());
                 JSONObject response;
               
-                String temp = utils.receiveMessage();
+                String temp = utils.receiveMessage(); // Recebe em string e faz o parse pra JSON
                 JSONObject request;
 				JSONParser parserMessage = new JSONParser();
 				request = (JSONObject) parserMessage.parse(temp);
@@ -51,6 +53,7 @@ public class Server {
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
 			                ClientListener clientListener = new ClientListener(socketClient, this);
 			                clients.add(clientListener);
+			                new Thread(clientListener).start();
 	                	}
 	                	utils.sendMessage(response);
 	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());
@@ -61,6 +64,7 @@ public class Server {
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
 			                ClientListener clientListener = new ClientListener(socketClient, this);
 			                clients.add(clientListener);
+			                new Thread(clientListener).start();
 	                	}
 	                	utils.sendMessage(response);
 	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());

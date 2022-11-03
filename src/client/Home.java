@@ -25,34 +25,41 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import classes.User;
 import server.Server;
 
 public class Home extends GUI {
 
-    private JLabel title;
-    private ServerSocket server;
-    public static Socket socket;
-    private final String request;
-    private JButton jb_get_connected, jb_logout;
+	private ServerSocket server;
+	private static String request;
+
+	// Declarando componentes
+	private JLabel title;
+    private JButton jb_get_connected, jb_message;
     private JList jlist;
     private JScrollPane scroll;
+    
+    public static Socket socket;
+    private static Utils utils;
 
-    public Home(Socket socket, String request) {
+    public Home(Socket socket, String request, Utils utils) throws ParseException {
         super("Chat - Home");
 		
         this.request = request;
         this.socket = socket;
+        this.utils = utils;
         this.title.setText("Bem-vindo(a)");
         this.setTitle("Home");
+        this.getUser(request);
     }
 
     @Override
     protected void initComponents() {
         title = new JLabel();
-        jb_get_connected = new JButton("Desconectar");
+        jb_get_connected = new JButton("Buscar usuários");
         jlist = new JList();
         scroll = new JScrollPane(jlist);
-        jb_logout = new JButton("Abrir Conversa");
+        jb_message = new JButton("Abrir Conversa");
     }
 
     @Override
@@ -70,8 +77,8 @@ public class Home extends GUI {
         jb_get_connected.setBounds(400, 10, 180, 40);
         jb_get_connected.setFocusable(false);
 
-        jb_logout.setBounds(10, 400, 575, 40);
-        jb_logout.setFocusable(false);
+        jb_message.setBounds(10, 400, 575, 40);
+        jb_message.setFocusable(false);
 
         jlist.setBorder(BorderFactory.createTitledBorder("Usuários online"));
         jlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -87,7 +94,7 @@ public class Home extends GUI {
         this.add(title);
         this.add(jb_get_connected);
         this.add(scroll);
-        this.add(jb_logout);
+        this.add(jb_message);
     }
 
     @Override
@@ -99,22 +106,32 @@ public class Home extends GUI {
 
             @Override
             public void windowClosing(WindowEvent e) {
-            	try {
-					Utils utils = new Utils(Home.socket);
-					JSONObject params = new JSONObject();
-					params.put("ra", "2328585");
-					params.put("senha", "12345");
-					
-					JSONObject request = new JSONObject();
-					request.put("operacao", "logout");
-					request.put("parametros", params);
-					
-					System.out.println("[CLIENTE->SERVIDOR]" + request.toJSONString());
-					utils.sendMessage(request);
-					
-				} catch (IOException e1) {
-					//
-				}    			
+            	JSONObject user = getUser(request);
+            	
+            	JSONObject params = new JSONObject();
+    			params.put("ra", user.get("ra"));
+    			params.put("senha", user.get("senha"));
+    			
+    			JSONObject request = new JSONObject();
+    			request.put("operacao", "logout");
+    			request.put("parametros", params);
+    			
+    			utils.sendMessage(request);
+    			
+    			try {
+    				String temp = utils.receiveMessage();
+    				JSONObject response;
+    				JSONParser parserMessage = new JSONParser();
+    				response = (JSONObject) parserMessage.parse(temp);
+    				Integer status = Integer.parseInt(response.get("status").toString());
+    				
+    				if(status == 600) {
+    					utils.close();
+    					System.out.println("[CLIENTE->SERVIDOR]: Conexão fechada para " + socket);
+    				} 
+    			} catch (ParseException | IOException ex) {
+    				System.out.println("[CLIENTE->SERVER: ] Erro ao realizar logout. " + ex.getMessage());
+    			}		
             }
 
             @Override
@@ -143,10 +160,32 @@ public class Home extends GUI {
             }
         });
     	
-    	this.jb_logout.addActionListener(event -> {
-    		System.out.println("ok");
+    	this.jb_message.addActionListener(event -> {
+    		System.out.println("Abrir chat");
+    	});
+    	
+    	this.jb_get_connected.addActionListener(event -> {
+    		System.out.println("Buscar usuários");
     	});
        
+    }
+    
+    public static JSONObject getUser(String temp)
+    {	
+    	JSONObject userObj = new JSONObject();
+		
+    	try {
+			JSONParser parserMessage = new JSONParser();
+			JSONObject json;
+			json = (JSONObject) parserMessage.parse(temp);
+			JSONObject data = (JSONObject) json.get("dados");
+			userObj = (JSONObject) data.get("usuario");
+			
+		} catch (ParseException e) {
+			//@TODO
+		}		
+		
+		return userObj;
     }
 
     @Override

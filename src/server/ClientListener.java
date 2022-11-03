@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import client.Home;
@@ -16,13 +17,11 @@ public class ClientListener implements Runnable {
 	private Socket socket;
 	private Server server;
 	private boolean running;
-//	private Utils utils;
 	
 	public ClientListener(Socket socket, Server server) throws IOException {
 		this.socket = socket;
 		this.server = server;
 		this.running = false;
-//		this.utils = new Utils(this.connection);
 	}
 	
 	public boolean isRunning() {
@@ -37,14 +36,33 @@ public class ClientListener implements Runnable {
 		 running = true;
 		 while(running) {
 			 try {
-				Utils utils = new Utils(Home.socket);
-				String response = utils.receiveMessage();
-				System.out.println(response);
+				String temp = Server.utils.receiveMessage(); // Recebe em string e faz o parse pra JSON
+				JSONParser parserMessage = new JSONParser();
+				JSONObject request = (JSONObject) parserMessage.parse(temp);
 				
+				String operation = request.get("operacao").toString();
 				
+				switch(operation) {
+	                case "logout" : {
+	                	JSONObject response = Server.user.logout(request.toJSONString());
+	                	if(Integer.parseInt(response.get("status").toString()) == 600) {
+	                		//
+	                	}
+	                	Server.utils.sendMessage(response);
+	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());
+	                	running = false;
+	                	break;
+	                }
+	            }
+				 
 			} catch (IOException | ParseException e) {
 				System.out.println("[CLIENT LISTENER ERROR]: " + e.getMessage() );
 			}
 		 }
+	}
+
+	@Override
+	public String toString() {
+		return "ClientListener [socket=" + socket + ", server=" + server + ", running=" + running + "]";
 	}
 }

@@ -41,4 +41,16 @@ public class Utils {
     {
     	this.out.flush();
     }
+    
+    public void close() throws IOException
+    {
+    	this.in.close();
+        this.out.close();
+        this.socket.close();
+    }
+
+	@Override
+	public String toString() {
+		return "Utils [in=" + in + ", out=" + out + ", socket=" + socket + "]";
+	}
 }
