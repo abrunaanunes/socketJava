@@ -39,6 +39,7 @@ public class Server {
             
             while (true) {
                 Socket socketClient = socketServer.accept();
+                System.out.println("[SERVIDOR]: Conexão aberta para: " + socketClient.getRemoteSocketAddress().toString());
                 this.utils = new Utils(socketClient);
                 JSONObject response;
               

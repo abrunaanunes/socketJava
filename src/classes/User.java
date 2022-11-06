@@ -101,16 +101,12 @@ public class User {
     	JSONObject response = new JSONObject();
     	User user = new User();
     	
-		JSONObject parametros = null;
-		JSONParser parserMessage = new JSONParser();
-		
-		parametros = (JSONObject) json.get("parametros");
+		JSONObject parametros = (JSONObject) json.get("parametros");
 		String name = (String) parametros.get("nome");
 		String ra = (String) parametros.get("ra");
 		String password = (String) parametros.get("senha");
 		Integer category_id = Integer.parseInt(parametros.get("categoria_id").toString());
 		String description = (String) parametros.get("descricao");
-		int isActive = 0;
     	
     	int i;
     	

@@ -1,13 +1,6 @@
 package classes;
 
-import java.net.Socket;
 import java.util.Arrays;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import common.Utils;
 
 public class UserList {
 	public static User users[];
