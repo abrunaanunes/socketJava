@@ -32,6 +32,7 @@ public class Home extends GUI {
 
 	private ServerSocket server;
 	private static String request;
+	private ArrayList<String> connected_users;
 
 	// Declarando componentes
 	private JLabel title;
@@ -49,6 +50,7 @@ public class Home extends GUI {
         this.socket = socket;
         this.utils = utils;
         this.title.setText("Bem-vindo(a)");
+        this.connected_users = new ArrayList<String>();
         this.setTitle("Home");
         this.getUser(request);
     }
@@ -164,9 +166,7 @@ public class Home extends GUI {
     		System.out.println("Abrir chat");
     	});
     	
-    	this.jb_get_connected.addActionListener(event -> {
-    		System.out.println("Buscar usuários");
-    	});
+    	this.jb_get_connected.addActionListener(event -> getConnectedUsers());
        
     }
     
@@ -187,6 +187,35 @@ public class Home extends GUI {
 		
 		return userObj;
     }
+    
+    private void getConnectedUsers() {
+    	JSONObject user = getUser(request);
+    	
+    	JSONObject params = new JSONObject();
+		params.put("categoria_id", 0);
+		
+		JSONObject request = new JSONObject();
+		request.put("operacao", "obter_usuarios");
+		request.put("parametros", params);
+		
+		utils.sendMessage(request);
+		
+//		try {
+//			String temp = utils.receiveMessage();
+//			JSONObject response;
+//			JSONParser parserMessage = new JSONParser();
+//			response = (JSONObject) parserMessage.parse(temp);
+//			Integer status = Integer.parseInt(response.get("status").toString());
+//			
+//			if(status == 600) {
+//				utils.close();
+//				System.out.println("[CLIENTE->SERVIDOR]: Conexão fechada para " + socket);
+//			} 
+//		} catch (ParseException | IOException ex) {
+//			System.out.println("[CLIENTE->SERVER: ] Erro ao realizar logout. " + ex.getMessage());
+//		}
+    }
+    
 
     @Override
     protected void start() {

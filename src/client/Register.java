@@ -140,7 +140,8 @@ public class Register extends GUI {
 				Integer status = Integer.parseInt(response.get("status").toString()) ;
 				
 				if(status == 201) {
-					Home home = new Home(socket, request.toJSONString(), utils);
+					utils.close();
+					Login login = new Login();
 					this.dispose();
 				} else {
 					JOptionPane.showMessageDialog(this, response.get("mensagem"));

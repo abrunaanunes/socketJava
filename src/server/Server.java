@@ -26,7 +26,11 @@ public class Server {
 
     @SuppressWarnings("unused")
 	public Server() {
-    	this.user = new User(new CategoryList(), new UserList());
+    	this.user = new User();
+    	
+    	// Corrigir pra não ser necessário instanciar 
+    	CategoryList categoryList = new CategoryList();
+    	UserList userList = new UserList();
     	
     	try {
             clients = new ArrayList<ClientListener>();
@@ -39,19 +43,18 @@ public class Server {
                 JSONObject response;
               
                 String temp = utils.receiveMessage(); // Recebe em string e faz o parse pra JSON
-                JSONObject request;
 				JSONParser parserMessage = new JSONParser();
-				request = (JSONObject) parserMessage.parse(temp);
+				JSONObject request = (JSONObject) parserMessage.parse(temp);
+				JSONObject params = (JSONObject) request.get("parametros");
+				String operation = request.get("operacao").toString();
 				
-                System.out.println("[CLIENTE->SERVIDOR]" + request.toJSONString());
-                String operation = request.get("operacao").toString();
-                
+				System.out.println("[CLIENTE->SERVIDOR]" + request.toJSONString());                
                 switch(operation) {
 	                case "login" : {
 	                	response = user.login(request);
-	                	System.out.println(response.toJSONString());
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
-			                ClientListener clientListener = new ClientListener(socketClient, this);
+	                		User userConnection = user.getUser(params.get("ra").toString());
+			                ClientListener clientListener = new ClientListener(userConnection, socketClient, this);
 			                clients.add(clientListener);
 			                new Thread(clientListener).start();
 	                	}
@@ -62,7 +65,8 @@ public class Server {
 	                case "cadastrar" : {
 	                	response = user.register(request);
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
-			                ClientListener clientListener = new ClientListener(socketClient, this);
+	                		User userConnection = user.getUser(params.get("ra").toString());
+			                ClientListener clientListener = new ClientListener(userConnection, socketClient, this);
 			                clients.add(clientListener);
 			                new Thread(clientListener).start();
 	                	}

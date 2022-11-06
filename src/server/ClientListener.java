@@ -5,21 +5,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import classes.User;
 import client.Home;
 import common.Utils;
 
 public class ClientListener implements Runnable {
 	private Socket socket;
 	private Server server;
+	private User user;
 	private boolean running;
 	
-	public ClientListener(Socket socket, Server server) throws IOException {
+	public ClientListener(User user, Socket socket, Server server) throws IOException {
 		this.socket = socket;
+		this.user = user;
 		this.server = server;
 		this.running = false;
 	}
@@ -45,13 +50,23 @@ public class ClientListener implements Runnable {
 				switch(operation) {
 	                case "logout" : {
 	                	JSONObject response = Server.user.logout(request.toJSONString());
-	                	if(Integer.parseInt(response.get("status").toString()) == 600) {
-	                		//
-	                	}
 	                	Server.utils.sendMessage(response);
 	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());
 	                	running = false;
 	                	break;
+	                }
+	                case "obter_usuarios": {
+	                	ArrayList<ClientListener> clients = server.getClients();
+	                	
+	                	System.out.println(clients);
+//	                	
+//	                	JSONObject response = new JSONObject();
+//	                	JSONObject data = new JSONObject();
+//	                	
+//	                	response.put("status", 203);
+//	                    response.put("mensagem", "Lista de usuários");
+//	                    response.put("dados", data);
+//	                	break;
 	                }
 	            }
 				 
@@ -63,6 +78,11 @@ public class ClientListener implements Runnable {
 
 	@Override
 	public String toString() {
-		return "ClientListener [socket=" + socket + ", server=" + server + ", running=" + running + "]";
+		return "ClientListener [socket=" + socket + ", server=" + server + ", user=" + user + ", running=" + running
+				+ "]";
+	}
+
+	public User getUser() {
+		return user;
 	}
 }

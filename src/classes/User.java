@@ -10,22 +10,15 @@ public class User {
     private String password;
     private Integer category_id;
     private String description;
-    private Boolean isAvailable;
-    public CategoryList categoryList;
-    public UserList userList;
+    private int isAvailable;
 
-    public User(String name, String ra, String password, Integer category_id, String description, Boolean isActive) {
+    public User(String name, String ra, String password, Integer category_id, String description, int isAvailable) {
     	this.name = name;
     	this.ra = ra;
     	this.password = password;
     	this.category_id = category_id;
     	this.description = description;
-    	this.isAvailable = false;
-    }
-    
-    public User(CategoryList categoryList, UserList userList) {
-    	this.categoryList = categoryList;
-    	this.userList = userList;
+    	this.isAvailable = isAvailable;
     }
     
     public User() {
@@ -72,11 +65,11 @@ public class User {
 		this.description = description;
 	}
 
-	public Boolean getIsAvailable() {
+	public int getIsAvailable() {
 		return isAvailable;
 	}
 
-	public void setIsAvailable(Boolean isAvailable) {
+	public void setIsAvailable(int isAvailable) {
 		this.isAvailable = isAvailable;
 	}
 
@@ -88,11 +81,11 @@ public class User {
 	
 	public User getUser(String ra, String password) {
         int i;
-        for (i = 0; i < this.userList.users.length; i++) {
-            if(this.userList.users[i] != null) {
-            	if ((this.userList.users[i].getRa().equals(ra)) && (this.userList.users[i].getPassword().equals(password))) {
+        for (i = 0; i < UserList.users.length; i++) {
+            if(UserList.users[i] != null) {
+            	if ((UserList.users[i].getRa().equals(ra)) && (UserList.users[i].getPassword().equals(password))) {
 
-                    return this.userList.users[i];
+                    return UserList.users[i];
 
                 }
             }
@@ -105,9 +98,9 @@ public class User {
         int i;
         for (i = 0; i < 3; i++) {
 
-            if (this.userList.users[i].getRa().equals(ra)) {
+            if (UserList.users[i].getRa().equals(ra)) {
 
-                return this.userList.users[i];
+                return UserList.users[i];
 
             }
 
@@ -135,7 +128,7 @@ public class User {
     	
     	int i;
     	
-    	if(categoryList.getCategory(category_id) == null) {
+    	if(CategoryList.getCategory(category_id) == null) {
     		response.put("status", 400);
             response.put("mensagem", "Formato incompatível com JSON");
             response.put("dados", data);
@@ -149,12 +142,12 @@ public class User {
         	return response;
     	}
     	
-    	for (i = 0; i < this.userList.users.length; i++) {
-            if (this.userList.users[i] == null) {
+    	for (i = 0; i < UserList.users.length; i++) {
+            if (UserList.users[i] == null) {
 
-                this.userList.users[i] = new User(name, ra, password, category_id, description, isActive);
+                UserList.users[i] = new User(name, ra, password, category_id, description, 1);
 
-                user = this.userList.users[i];
+                user = UserList.users[i];
             }
 
         }
@@ -165,6 +158,7 @@ public class User {
         userObj.put("nome", user.getName());
         userObj.put("categoria_id", user.getCategoryId());
         userObj.put("descricao", user.getDescription());
+        userObj.put("disponivel", user.getIsAvailable());
         data.put("usuario", userObj);
         
     	response.put("status", 201);
@@ -194,13 +188,14 @@ public class User {
         }
         
         // Atualizando isAvailable       	
-        user.setIsAvailable(true);
+        user.setIsAvailable(1);
         JSONObject userObj = new JSONObject();
         userObj.put("ra", user.getRa());
         userObj.put("senha", user.getPassword());
         userObj.put("nome", user.getName());
         userObj.put("categoria_id", user.getCategoryId());
         userObj.put("descricao", user.getDescription());
+        userObj.put("disponivel", user.getIsAvailable());
         data.put("usuario", userObj);
         
         response.put("status", 200);
@@ -241,7 +236,7 @@ public class User {
             response.put("dados", data);
             return response;
             
-		} else if(user.getIsAvailable() == false) {
+		} else if(user.getIsAvailable() == 0) {
             response.put("status", 202);
             response.put("mensagem", "Usuário já  encontra-se desconectado.");
             response.put("dados", data);
@@ -249,7 +244,7 @@ public class User {
 		} 
 		
 		// Atualizando isAvailable
-		user.setIsAvailable(false);
+		user.setIsAvailable(0);
 		response.put("status", 600);
 		response.put("mensagem", "Usuário desconectado com sucesso!");
 		response.put("dados", data);

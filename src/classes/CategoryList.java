@@ -1,7 +1,7 @@
 package classes;
 
 public class CategoryList {
-	public Category categories[];
+	public static Category categories[];
 	
 	public CategoryList()
 	{
@@ -31,13 +31,13 @@ public class CategoryList {
 
     }
 	
-	public Category getCategory(int id) {
+	public static Category getCategory(int id) {
         int i;
-        for (i = 0; i < this.categories.length; i++) {
+        for (i = 0; i < categories.length; i++) {
 
-            if (this.categories[i].getId() == id) {
+            if (categories[i].getId() == id) {
 
-                return this.categories[i];
+                return categories[i];
 
             }
 

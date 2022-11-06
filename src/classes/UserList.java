@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 import common.Utils;
 
 public class UserList {
-	public User users[];
+	public static User users[];
 
 	public UserList() {
 		this.users = new User[10];
@@ -19,9 +19,9 @@ public class UserList {
 
 	public void initializeList() {
 
-		User user1 = new User("Bruna Nunes", "2328585", "12345", 1, "Oferece serviços de manutenção", false);
-		User user2 = new User("Maria Eduarda", "2328589", "12345", 1, "Oferece serviços de manutenção", false);
-		User user3 = new User("Caroline Wagner", "2328580", "12345", 1, "Oferece serviços de manutenção", false);
+		User user1 = new User("Bruna Nunes", "2328585", "12345", 1, "Oferece serviços de manutenção", 0);
+		User user2 = new User("Maria Eduarda", "2328589", "12345", 1, "Oferece serviços de manutenção", 0);
+		User user3 = new User("Caroline Wagner", "2328580", "12345", 1, "Oferece serviços de manutenção", 0);
 
 		this.users[0] = user1;
 		this.users[1] = user2;
