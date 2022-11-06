@@ -53,7 +53,7 @@ public class Server {
 	                case "login" : {
 	                	response = user.login(request);
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
-	                		User userConnection = user.getUser(params.get("ra").toString());
+	                		User userConnection = user.getUser(params.get("ra").toString(), params.get("senha").toString());
 			                ClientListener clientListener = new ClientListener(userConnection, socketClient, this);
 			                clients.add(clientListener);
 			                new Thread(clientListener).start();
@@ -65,7 +65,7 @@ public class Server {
 	                case "cadastrar" : {
 	                	response = user.register(request);
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
-	                		User userConnection = user.getUser(params.get("ra").toString());
+	                		User userConnection = user.getUser(params.get("ra").toString(), params.get("senha").toString());
 			                ClientListener clientListener = new ClientListener(userConnection, socketClient, this);
 			                clients.add(clientListener);
 			                new Thread(clientListener).start();

@@ -29,7 +29,7 @@ public class Utils {
         return !out.checkError();
     }
     
-    public String receiveMessage() throws IOException, ParseException
+    public String receiveMessage() throws IOException, ParseException, NullPointerException
     {
     	String temp =  in.readLine();
 		JSONParser parserMessage = new JSONParser();

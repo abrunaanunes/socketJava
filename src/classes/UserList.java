@@ -33,4 +33,14 @@ public class UserList {
 	public String toString() {
 		return "UserList [users=" + Arrays.toString(users) + "]";
 	}
+
+	public static String getUsers() {
+		return "UserList [users=" + Arrays.toString(users) + "]";
+	}
+
+	public static void setUsers(User[] users) {
+		UserList.users = users;
+	}
+	
+	
 }

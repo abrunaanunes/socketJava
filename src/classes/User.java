@@ -94,20 +94,6 @@ public class User {
         return null;
     }
     
-    public User getUser(String ra) {
-        int i;
-        for (i = 0; i < 3; i++) {
-
-            if (UserList.users[i].getRa().equals(ra)) {
-
-                return UserList.users[i];
-
-            }
-
-        }
-        return null;
-    }
-    
     @SuppressWarnings("unchecked")
     public JSONObject register(JSONObject json) {
     	
@@ -119,12 +105,12 @@ public class User {
 		JSONParser parserMessage = new JSONParser();
 		
 		parametros = (JSONObject) json.get("parametros");
-		String name = (String) parametros.get("ra");
+		String name = (String) parametros.get("nome");
 		String ra = (String) parametros.get("ra");
 		String password = (String) parametros.get("senha");
 		Integer category_id = Integer.parseInt(parametros.get("categoria_id").toString());
-		String description = (String) parametros.get("senha");
-		Boolean isActive = false;
+		String description = (String) parametros.get("descricao");
+		int isActive = 0;
     	
     	int i;
     	
@@ -135,7 +121,7 @@ public class User {
             return response;
     	}
     	
-    	if(this.getUser(ra) != null) {
+    	if(this.getUser(ra, password) != null) {
     		response.put("status", 202);
         	response.put("mensagem", "Usuário já encontra-se cadastrado!");
         	response.put("dados", data);
@@ -145,7 +131,7 @@ public class User {
     	for (i = 0; i < UserList.users.length; i++) {
             if (UserList.users[i] == null) {
 
-                UserList.users[i] = new User(name, ra, password, category_id, description, 1);
+                UserList.users[i] = new User(name, ra, password, category_id, description, 0);
 
                 user = UserList.users[i];
             }
@@ -175,7 +161,7 @@ public class User {
     	User user = new User();
 		
     	JSONObject parametros = (JSONObject) json.get("parametros");
-		
+    	
 		String senha = (String) parametros.get("senha");
         String ra = (String) parametros.get("ra");
         user = this.getUser(ra, senha);
@@ -183,6 +169,13 @@ public class User {
         if(user == null) {
         	response.put("status", 404);
         	response.put("mensagem", "Usuário não encontrado");
+        	response.put("dados", data);
+        	return response;
+        }
+        
+        if(user.getIsAvailable() == 1) {
+        	response.put("status", 403);
+        	response.put("mensagem", "Usuário já encontra-se conectado");
         	response.put("dados", data);
         	return response;
         }
@@ -228,9 +221,11 @@ public class User {
 		params = (JSONObject) json.get("parametros");
 		
 		String ra = params.get("ra").toString();
-		user = this.getUser(ra);
+		String password = params.get("senha").toString();
+		user = this.getUser(ra, password);
 		
 		if(user == null) {
+			System.out.println(user);
             response.put("status", 404);
             response.put("mensagem", "Usuário não encontrado.");
             response.put("dados", data);
