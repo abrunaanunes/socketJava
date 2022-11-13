@@ -42,7 +42,10 @@ public class Server {
                 JSONObject response;
               
                 String temp = socketClient.receiveMessage(); // Recebe em string e faz o parse pra JSON
-				JSONParser parserMessage = new JSONParser();
+				if(temp == null) {
+					continue;
+				}
+                JSONParser parserMessage = new JSONParser();
 				JSONObject request = (JSONObject) parserMessage.parse(temp);
 				JSONObject params = (JSONObject) request.get("parametros");
 				String operation = request.get("operacao").toString();
