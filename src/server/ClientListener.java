@@ -37,7 +37,7 @@ public class ClientListener implements Runnable {
 		 while(running) {
 			 try {
 				String temp = socketClient.receiveMessage(); // Recebe em string e faz o parse pra JSON
-				if(temp.equals(null) || temp == null) {
+				if(temp == null) {
 					continue;
 				}
 				System.out.println("[CLIENTE->SERVIDOR]" + temp);
