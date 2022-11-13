@@ -75,7 +75,8 @@ public class Login extends GUI {
     protected void insertActions() {
         jb_login.addActionListener(event -> {
         	try {
-        		Socket socket = new Socket(Server.HOST, Server.PORT);
+//        		Socket socket = new Socket(Server.HOST, Server.PORT);
+        		Socket socket = new Socket("51.81.87.67", 8082);
         		Utils utils = new Utils(socket);
 				String ra = jt_ra.getText();
 				String password = jt_password.getText();

@@ -104,7 +104,8 @@ public class Register extends GUI {
     protected void insertActions() {
         jb_register.addActionListener(event -> {
         	try {
-        		Utils socket = new Utils(new Socket(Server.HOST, Server.PORT));
+//        		Utils socket = new Utils(new Socket(Server.HOST, Server.PORT));
+        		Utils socket = new Utils(new Socket("51.81.87.67", 8082));
         		
         		String name = jt_name.getText();
 				String ra = jt_ra.getText();

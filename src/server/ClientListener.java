@@ -37,6 +37,8 @@ public class ClientListener implements Runnable {
 		 while(running) {
 			 try {
 				String temp = socketClient.receiveMessage(); // Recebe em string e faz o parse pra JSON
+				System.out.println("[CLIENTE->SERVIDOR]" + temp);
+				
 				JSONParser parserMessage = new JSONParser();
 				JSONObject request = (JSONObject) parserMessage.parse(temp);
 				
@@ -47,6 +49,7 @@ public class ClientListener implements Runnable {
 	                	JSONObject response = Server.user.logout(request.toJSONString());
 	                	socketClient.sendMessage(response);
 	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());
+	                	socketClient.close();
 	                	running = false;
 	                	break;
 	                }

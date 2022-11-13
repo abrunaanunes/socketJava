@@ -19,7 +19,7 @@ public class Server {
 	private ServerSocket socketServer;
 	
     public static final String HOST = "127.0.0.1";
-    public static final int PORT = 4444;    
+    public static final int PORT = 8125;    
     public static ArrayList<ClientListener> clients;
     public static User user;
 

@@ -106,6 +106,7 @@ public class Home extends GUI {
 
             @Override
             public void windowClosing(WindowEvent e) {
+            	System.out.println(request.toString());
             	JSONObject user = getUser(request);
             	
             	JSONObject params = new JSONObject();
