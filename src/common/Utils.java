@@ -29,10 +29,15 @@ public class Utils {
     
     public String receiveMessage() throws IOException, ParseException, NullPointerException
     {
-    	String temp =  in.readLine();
-		JSONParser parserMessage = new JSONParser();
-		JSONObject response = (JSONObject) parserMessage.parse(temp);
-		return response.toJSONString();
+    	String temp;
+    	if((temp = in.readLine()) != null) {    		
+    		JSONParser parserMessage = new JSONParser();
+    		JSONObject response = (JSONObject) parserMessage.parse(temp);
+    		return response.toJSONString();
+    	}
+    	
+    	return null;
+    		
     }
     
     public void flush() 
