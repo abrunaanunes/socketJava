@@ -9,15 +9,16 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import classes.User;
+import common.Utils;
 
 public class ClientListener implements Runnable {
-	private Socket socket;
+	private Utils socketClient;
 	private Server server;
 	private User user;
 	private boolean running;
 	
-	public ClientListener(User user, Socket socket, Server server) throws IOException {
-		this.socket = socket;
+	public ClientListener(User user, Utils socketClient, Server server) throws IOException {
+		this.socketClient = socketClient;
 		this.user = user;
 		this.server = server;
 		this.running = false;
@@ -35,7 +36,7 @@ public class ClientListener implements Runnable {
 		 running = true;
 		 while(running) {
 			 try {
-				String temp = Server.utils.receiveMessage(); // Recebe em string e faz o parse pra JSON
+				String temp = socketClient.receiveMessage(); // Recebe em string e faz o parse pra JSON
 				JSONParser parserMessage = new JSONParser();
 				JSONObject request = (JSONObject) parserMessage.parse(temp);
 				
@@ -44,7 +45,7 @@ public class ClientListener implements Runnable {
 				switch(operation) {
 	                case "logout" : {
 	                	JSONObject response = Server.user.logout(request.toJSONString());
-	                	Server.utils.sendMessage(response);
+	                	socketClient.sendMessage(response);
 	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());
 	                	running = false;
 	                	break;
@@ -72,7 +73,7 @@ public class ClientListener implements Runnable {
 
 	@Override
 	public String toString() {
-		return "ClientListener [socket=" + socket + ", server=" + server + ", user=" + user + ", running=" + running
+		return "ClientListener [socket=" + socketClient + ", server=" + server + ", user=" + user + ", running=" + running
 				+ "]";
 	}
 

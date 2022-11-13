@@ -101,7 +101,7 @@ public class Login extends GUI {
 				Integer status = Integer.parseInt(response.get("status").toString());
 				
 				if(status == 200) {
-					Home home = new Home(socket, response.toJSONString(), utils);
+					Home home = new Home(socket, response.toJSONString());
 					this.dispose();
 				} else {
 					JOptionPane.showMessageDialog(this, response.get("mensagem"));

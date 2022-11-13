@@ -51,4 +51,8 @@ public class Utils {
 	public String toString() {
 		return "Utils [in=" + in + ", out=" + out + ", socket=" + socket + "]";
 	}
+
+	public Object getRemoteSocketAddress() {
+		return this.socket.getRemoteSocketAddress();
+	}
 }

@@ -39,16 +39,14 @@ public class Home extends GUI {
     private JButton jb_get_connected, jb_message;
     private JList jlist;
     private JScrollPane scroll;
-    
-    public static Socket socket;
-    private static Utils utils;
+   
+    private static Utils socket;
 
-    public Home(Socket socket, String request, Utils utils) throws ParseException {
+    public Home(Socket socket, String request) throws ParseException, IOException {
         super("Chat - Home");
 		
         this.request = request;
-        this.socket = socket;
-        this.utils = utils;
+        this.socket = new Utils(socket);
         this.title.setText("Bem-vindo(a)");
         this.connected_users = new ArrayList<String>();
         this.setTitle("Home");
@@ -118,17 +116,17 @@ public class Home extends GUI {
     			request.put("operacao", "logout");
     			request.put("parametros", params);
     			
-    			utils.sendMessage(request);
+    			socket.sendMessage(request);
     			
     			try {
-    				String temp = utils.receiveMessage();
+    				String temp = socket.receiveMessage();
     				JSONObject response;
     				JSONParser parserMessage = new JSONParser();
     				response = (JSONObject) parserMessage.parse(temp);
     				Integer status = Integer.parseInt(response.get("status").toString());
     				
     				if(status == 600) {
-    					utils.close();
+    					socket.close();
     					System.out.println("[CLIENTE->SERVIDOR]: Conexão fechada para " + socket);
     				} 
     			} catch (ParseException | IOException ex) {
@@ -198,7 +196,7 @@ public class Home extends GUI {
 		request.put("operacao", "obter_usuarios");
 		request.put("parametros", params);
 		
-		utils.sendMessage(request);
+		socket.sendMessage(request);
 		
 //		try {
 //			String temp = utils.receiveMessage();
