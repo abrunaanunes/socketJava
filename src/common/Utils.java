@@ -29,8 +29,8 @@ public class Utils {
     
     public String receiveMessage() throws IOException, ParseException, NullPointerException
     {
-    	String temp;
-    	if((temp = in.readLine()) != null) {    		
+    	String temp = in.readLine();
+    	if(temp != null || temp.equals("null")) {    		
     		JSONParser parserMessage = new JSONParser();
     		JSONObject response = (JSONObject) parserMessage.parse(temp);
     		return response.toJSONString();
