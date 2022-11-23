@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -32,12 +33,12 @@ public class Home extends GUI {
 
 	private ServerSocket server;
 	private static String request;
-	private ArrayList<String> connected_users;
+	private static ArrayList<String> connected_users;
 
 	// Declarando componentes
 	private JLabel title;
     private JButton jb_get_connected, jb_message;
-    private JList jlist;
+    private static JList jlist;
     private JScrollPane scroll;
    
     private static Utils socket;
@@ -102,6 +103,20 @@ public class Home extends GUI {
     	this.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent e) {
+            	try {
+    				String temp = socket.receiveMessage();
+    				System.out.println("[SERVIDOR->CLIENTE]: " + temp);
+    				JSONObject response;
+    				JSONParser parserMessage = new JSONParser();
+    				response = (JSONObject) parserMessage.parse(temp);
+    				Integer status = Integer.parseInt(response.get("status").toString());
+    				
+    				if(status == 203) {
+    					getConnectedUsers(response);
+    				} 
+    			} catch (ParseException | IOException ex) {
+    				System.out.println("[CLIENTE->SERVER: ] Erro ao iniciar tela home. " + ex.getMessage());
+    			}
             }
 
             @Override
@@ -121,6 +136,7 @@ public class Home extends GUI {
     			
     			try {
     				String temp = socket.receiveMessage();
+    				System.out.println("[SERVIDOR->CLIENTE]: " + temp);
     				JSONObject response;
     				JSONParser parserMessage = new JSONParser();
     				response = (JSONObject) parserMessage.parse(temp);
@@ -164,8 +180,6 @@ public class Home extends GUI {
     	this.jb_message.addActionListener(event -> {
     		System.out.println("Abrir chat");
     	});
-    	
-    	this.jb_get_connected.addActionListener(event -> getConnectedUsers());
        
     }
     
@@ -187,32 +201,21 @@ public class Home extends GUI {
 		return userObj;
     }
     
-    private void getConnectedUsers() {
-    	JSONObject user = getUser(request);
-    	
-    	JSONObject params = new JSONObject();
-		params.put("categoria_id", 0);
+    private static void getConnectedUsers(JSONObject json) {
+		JSONObject data = (JSONObject) json.get("dados");
+		JSONArray users = (JSONArray) data.get("usuarios");
 		
-		JSONObject request = new JSONObject();
-		request.put("operacao", "obter_usuarios");
-		request.put("parametros", params);
-		
-		socket.sendMessage(request);
-		
-//		try {
-//			String temp = utils.receiveMessage();
-//			JSONObject response;
-//			JSONParser parserMessage = new JSONParser();
-//			response = (JSONObject) parserMessage.parse(temp);
-//			Integer status = Integer.parseInt(response.get("status").toString());
-//			
-//			if(status == 600) {
-//				utils.close();
-//				System.out.println("[CLIENTE->SERVIDOR]: Conexão fechada para " + socket);
-//			} 
-//		} catch (ParseException | IOException ex) {
-//			System.out.println("[CLIENTE->SERVER: ] Erro ao realizar logout. " + ex.getMessage());
-//		}
+        jlist.removeAll();
+        connected_users.clear();
+        for (Object user : users) {
+        	if(user instanceof JSONObject) {
+        		JSONObject userObj = (JSONObject) user;
+        		String name = (String) userObj.get("nome");
+        		connected_users.add(name);
+        	}
+
+        }
+        jlist.setListData(connected_users.toArray());
     }
     
 

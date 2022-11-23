@@ -104,8 +104,8 @@ public class Register extends GUI {
     protected void insertActions() {
         jb_register.addActionListener(event -> {
         	try {
-        		Utils socket = new Utils(new Socket(Server.HOST, Server.PORT));
-//        		Utils socket = new Utils(new Socket("51.81.87.67", 8082));
+//        		Utils socket = new Utils(new Socket(Server.HOST, Server.PORT));
+        		Utils socket = new Utils(new Socket("10.20.8.119", 23000));
         		
         		String name = jt_name.getText();
 				String ra = jt_ra.getText();
@@ -129,8 +129,8 @@ public class Register extends GUI {
 		        request.put("operacao", "cadastrar");
 		        request.put("parametros", params);
 		        socket.sendMessage(request);
-		        
 		        String temp = socket.receiveMessage();
+		        System.out.println("[SERVIDOR->CLIENTE]: " + temp);
 		        JSONObject response;
 				JSONParser parserMessage = new JSONParser();
 				response = (JSONObject) parserMessage.parse(temp);

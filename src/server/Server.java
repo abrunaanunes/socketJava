@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -19,8 +20,8 @@ public class Server {
 	private ServerSocket socketServer;
 	
     public static final String HOST = "127.0.0.1";
-    public static final int PORT = 8125;    
-    public static ArrayList<ClientListener> clients;
+    public static final int PORT = 8085;    
+    public static ArrayList<ConnectionHandler> clients;
     public static User user;
 
     @SuppressWarnings("unused")
@@ -32,7 +33,7 @@ public class Server {
     	UserList userList = new UserList();
     	
     	try {
-            clients = new ArrayList<ClientListener>();
+            clients = new ArrayList<ConnectionHandler>();
             socketServer = new ServerSocket(PORT);
             System.out.println("Servidor iniciado na porta " + PORT);
             
@@ -56,7 +57,7 @@ public class Server {
 	                	response = user.login(request);
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
 	                		User userConnection = user.getUser(params.get("ra").toString(), params.get("senha").toString());
-			                ClientListener clientListener = new ClientListener(userConnection, socketClient, this);
+			                ConnectionHandler clientListener = new ConnectionHandler(userConnection, socketClient, this);
 			                clients.add(clientListener);
 			                new Thread(clientListener).start();
 	                	}
@@ -73,14 +74,43 @@ public class Server {
 	                	break;
 	                }
                 }
+                this.broadcast();
             }
         } catch (IOException | ParseException ex) {
             System.err.println("[ERROR:Server] -> " + ex.getMessage());
         }
     }
 
-    public ArrayList<ClientListener> getClients() {
-        return clients;
+    public void broadcast() {
+    	JSONArray users = new JSONArray();
+    	JSONObject data = new JSONObject();
+    	JSONObject response = new JSONObject();
+    	
+    	for(ConnectionHandler client : clients) {
+    		JSONObject userObj = new JSONObject();
+    		
+    		User user = new User();
+    		user = client.getUser();
+    		
+    		userObj.put("nome", user.getName());
+    		userObj.put("ra", user.getRa());
+    		userObj.put("categoria_id", user.getCategoryId());
+    		userObj.put("descricao", user.getDescription());
+    		userObj.put("disponivel", user.getIsAvailable());
+    		
+    		users.add(userObj);
+    	}
+    	
+    	data.put("usuarios", users);
+    	response.put("status", 203);
+    	response.put("mensagem", "Lista de usuários");
+    	response.put("dados", data);
+    	
+    	for(ConnectionHandler client : clients) {
+    		if(client != null) {
+    			client.sendMessage(response);
+    		}
+    	}
     }
 
     public static void main(String[] args) {

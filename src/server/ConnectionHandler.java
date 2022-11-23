@@ -11,13 +11,13 @@ import org.json.simple.parser.ParseException;
 import classes.User;
 import common.Utils;
 
-public class ClientListener implements Runnable {
+public class ConnectionHandler implements Runnable {
 	private Utils socketClient;
 	private Server server;
 	private User user;
 	private boolean running;
 	
-	public ClientListener(User user, Utils socketClient, Server server) throws IOException {
+	public ConnectionHandler(User user, Utils socketClient, Server server) throws IOException {
 		this.socketClient = socketClient;
 		this.user = user;
 		this.server = server;
@@ -56,19 +56,6 @@ public class ClientListener implements Runnable {
 	                	running = false;
 	                	break;
 	                }
-	                case "obter_usuarios": {
-	                	ArrayList<ClientListener> clients = server.getClients();
-	                	
-	                	System.out.println(clients);
-//	                	
-//	                	JSONObject response = new JSONObject();
-//	                	JSONObject data = new JSONObject();
-//	                	
-//	                	response.put("status", 203);
-//	                    response.put("mensagem", "Lista de usuários");
-//	                    response.put("dados", data);
-//	                	break;
-	                }
 	            }
 				 
 			} catch (IOException | ParseException e) {
@@ -82,6 +69,17 @@ public class ClientListener implements Runnable {
 		return "ClientListener [socket=" + socketClient + ", server=" + server + ", user=" + user + ", running=" + running
 				+ "]";
 	}
+	
+	public boolean sendMessage(JSONObject message)
+    {     
+    	return socketClient.sendMessage(message);
+    }
+	
+	public String receiveMessage() throws IOException, ParseException, NullPointerException
+    {
+    	return socketClient.receiveMessage();
+    		
+    }
 
 	public User getUser() {
 		return user;
