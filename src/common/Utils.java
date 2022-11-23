@@ -6,9 +6,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import classes.User;
+import client.Home;
+import server.ConnectionHandler;
+import server.Server;
 
 public class Utils {
 	private final BufferedReader in;	
@@ -60,4 +66,38 @@ public class Utils {
 	public Object getRemoteSocketAddress() {
 		return this.socket.getRemoteSocketAddress();
 	}
+	
+	public static void broadcast() {
+    	JSONArray users = new JSONArray();
+    	JSONObject data = new JSONObject();
+    	JSONObject response = new JSONObject();
+    	
+    	for(ConnectionHandler client : Server.clients) {
+    		JSONObject userObj = new JSONObject();
+    		
+    		User user = new User();
+    		user = client.getUser();
+    		
+    		userObj.put("nome", user.getName());
+    		userObj.put("ra", user.getRa());
+    		userObj.put("categoria_id", user.getCategoryId());
+    		userObj.put("descricao", user.getDescription());
+    		userObj.put("disponivel", user.getIsAvailable());
+    		
+    		users.add(userObj);
+    	}
+    	
+    	data.put("usuarios", users);
+    	response.put("status", 203);
+    	response.put("mensagem", "Lista de usuários");
+    	response.put("dados", data);
+    	
+    	for(ConnectionHandler client : Server.clients) {
+    		if(client != null) {
+    			client.sendMessage(response);
+    		}
+    	}
+    	
+//    	Home.getConnectedUsers(response);
+    }
 }

@@ -22,11 +22,9 @@ public class Server {
     public static final String HOST = "127.0.0.1";
     public static final int PORT = 8085;    
     public static ArrayList<ConnectionHandler> clients;
-    public static User user;
 
     @SuppressWarnings("unused")
 	public Server() {
-    	this.user = new User();
     	
     	// Corrigir pra não ser necessário instanciar 
     	CategoryList categoryList = new CategoryList();
@@ -38,7 +36,8 @@ public class Server {
             System.out.println("Servidor iniciado na porta " + PORT);
             
             while (true) {
-                Utils socketClient = new Utils(socketServer.accept());
+            	Socket socket = socketServer.accept();
+                Utils socketClient = new Utils(socket);
                 System.out.println("[SERVIDOR]: Conexão aberta para: " + socketClient.getRemoteSocketAddress().toString());
                 JSONObject response;
               
@@ -54,12 +53,12 @@ public class Server {
 				System.out.println("[CLIENTE->SERVIDOR]" + request.toJSONString());                
                 switch(operation) {
 	                case "login" : {
-	                	response = user.login(request);
+	                	response = User.login(request);
 	                	if(Integer.parseInt(response.get("status").toString()) == 200) {
-	                		User userConnection = user.getUser(params.get("ra").toString(), params.get("senha").toString());
-			                ConnectionHandler clientListener = new ConnectionHandler(userConnection, socketClient, this);
-			                clients.add(clientListener);
-			                new Thread(clientListener).start();
+	                		User userConnection = User.getUser(params.get("ra").toString(), params.get("senha").toString());
+			                ConnectionHandler connectionHandler = new ConnectionHandler(userConnection, socket);
+			                clients.add(connectionHandler);
+			                new Thread(connectionHandler).start();
 	                	}
 	                	socketClient.sendMessage(response);
 	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());
@@ -67,50 +66,18 @@ public class Server {
 	                }
 	                case "cadastrar" : {
 	                	// Fechar o socket no cadastro
-	                	response = user.register(request);	                	
+	                	response = User.register(request);	                	
 	                	socketClient.sendMessage(response);
 	                	socketClient.close();
 	                	System.out.println("[SERVIDOR->CLIENTE]" + response.toJSONString());
 	                	break;
 	                }
                 }
-                this.broadcast();
+                Utils.broadcast();
             }
         } catch (IOException | ParseException ex) {
             System.err.println("[ERROR:Server] -> " + ex.getMessage());
         }
-    }
-
-    public void broadcast() {
-    	JSONArray users = new JSONArray();
-    	JSONObject data = new JSONObject();
-    	JSONObject response = new JSONObject();
-    	
-    	for(ConnectionHandler client : clients) {
-    		JSONObject userObj = new JSONObject();
-    		
-    		User user = new User();
-    		user = client.getUser();
-    		
-    		userObj.put("nome", user.getName());
-    		userObj.put("ra", user.getRa());
-    		userObj.put("categoria_id", user.getCategoryId());
-    		userObj.put("descricao", user.getDescription());
-    		userObj.put("disponivel", user.getIsAvailable());
-    		
-    		users.add(userObj);
-    	}
-    	
-    	data.put("usuarios", users);
-    	response.put("status", 203);
-    	response.put("mensagem", "Lista de usuários");
-    	response.put("dados", data);
-    	
-    	for(ConnectionHandler client : clients) {
-    		if(client != null) {
-    			client.sendMessage(response);
-    		}
-    	}
     }
 
     public static void main(String[] args) {

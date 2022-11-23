@@ -79,7 +79,7 @@ public class User {
 				+ ", description=" + description + ", isAvailable=" + isAvailable + "]";
 	}
 	
-	public User getUser(String ra, String password) {
+	public static User getUser(String ra, String password) {
         int i;
         for (i = 0; i < UserList.users.length; i++) {
             if(UserList.users[i] != null) {
@@ -95,7 +95,7 @@ public class User {
     }
     
     @SuppressWarnings("unchecked")
-    public JSONObject register(JSONObject json) {
+    public static JSONObject register(JSONObject json) {
     	
     	JSONObject data = new JSONObject();
     	JSONObject response = new JSONObject();
@@ -117,7 +117,7 @@ public class User {
             return response;
     	}
     	
-    	if(this.getUser(ra, password) != null) {
+    	if(getUser(ra, password) != null) {
     		response.put("status", 202);
         	response.put("mensagem", "Usuário já encontra-se cadastrado!");
         	response.put("dados", data);
@@ -150,7 +150,7 @@ public class User {
     }
     
     @SuppressWarnings("unchecked")
-    public JSONObject login(JSONObject json) {
+    public static JSONObject login(JSONObject json) {
     	
     	JSONObject data = new JSONObject();
     	JSONObject response = new JSONObject();
@@ -160,7 +160,7 @@ public class User {
     	
 		String senha = (String) parametros.get("senha");
         String ra = (String) parametros.get("ra");
-        user = this.getUser(ra, senha);
+        user = getUser(ra, senha);
 
         if(user == null) {
         	response.put("status", 404);
@@ -194,7 +194,7 @@ public class User {
     }
     
     @SuppressWarnings("unchecked")
-	public JSONObject logout(String request) 
+	public static JSONObject logout(String request) 
     {	
     	JSONObject data = new JSONObject();
     	JSONObject response = new JSONObject();
@@ -218,7 +218,7 @@ public class User {
 		
 		String ra = params.get("ra").toString();
 		String password = params.get("senha").toString();
-		user = this.getUser(ra, password);
+		user = getUser(ra, password);
 		
 		if(user == null) {
 			System.out.println(user);

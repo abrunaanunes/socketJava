@@ -180,6 +180,10 @@ public class Home extends GUI {
     	this.jb_message.addActionListener(event -> {
     		System.out.println("Abrir chat");
     	});
+    	
+    	jb_get_connected.addActionListener(event -> {
+    		
+    	});
        
     }
     
@@ -201,7 +205,7 @@ public class Home extends GUI {
 		return userObj;
     }
     
-    private static void getConnectedUsers(JSONObject json) {
+    public static void getConnectedUsers(JSONObject json) {
 		JSONObject data = (JSONObject) json.get("dados");
 		JSONArray users = (JSONArray) data.get("usuarios");
 		
